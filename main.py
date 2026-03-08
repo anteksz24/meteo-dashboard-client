@@ -12,10 +12,13 @@ class FileModificationHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if event.event_type == "modified" and event.src_path == file_path:
             with open(file_path, "r") as file:
-                content = file.read()
+                data = {
+                    "content": file.read(),
+                    "password": os.getenv("METEO_PASSWORD")
+                }
                 print(f"Sending data to: {endpoint}")
                 try:
-                    response = requests.post(endpoint, content)
+                    response = requests.post(endpoint, json = data)
                     print(f"Status: {response.status_code}")
                 except Exception as e:
                     print(f"Error while sending data: {e}")
