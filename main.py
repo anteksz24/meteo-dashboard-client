@@ -48,7 +48,7 @@ class FileModificationHandler(FileSystemEventHandler):
         self.parser = DataParser()
 
     def on_modified(self, event):
-        if event.event_type == "modified" and event.src_path == file_path:
+        if event.src_path == file_path:
             with open(file_path, "r") as file:
                 data = {
                     "content": self.parser.parse_data(file.read()),
