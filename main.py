@@ -3,20 +3,33 @@ import requests
 import sys
 import os
 import re
+import json
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 file_path = sys.argv[1]
 endpoint = sys.argv[2]
 
+class ConfigLoader:
+    def load_config(self):
+        with open("config.json", "r") as config:
+            return json.load(config)
+
 class DataParser:
+    def __init__(self):
+        config = ConfigLoader()
+        self.replacements = config.load_config()["replacements"]
+
     def parse_data(self, data):
         data_split = (re.split(r':|;', data[1:-1]))
         data_dict = {}
         for i in range(0, len(data_split), 2):
             key = data_split[i]
             value = data_split[i+1]
-            data_dict[key] = value
+            if key not in self.replacements:
+                data_dict[key] = value
+            else:
+                data_dict[key] = self.replacements[key]
         return data_dict
     
 class DataSender:
