@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import json
+import datetime
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
@@ -17,8 +18,17 @@ class ConfigLoader:
 
 class DataParser:
     def __init__(self):
-        config = ConfigLoader()
-        self.replacements = config.load_config()["replacements"]
+        config = ConfigLoader().load_config()
+        self.replacements = config["replacements"]
+        self.use_computer_datetime = config["use-computer-datetime"]
+    
+    def get_datetime_value(self, date, time):
+        if self.use_computer_datetime:
+            date_and_time = str(datetime.datetime.now())
+            return date_and_time[:-7]
+        else:
+            date_and_time = "20" + date[:2] + "-" + date[2:4] + "-" + date[4:6] + " " + time[:2] + ":" + time[2:4] + ":" + time[4:6]
+            return date_and_time
 
     def parse_data(self, data):
         data_split = (re.split(r':|;', data[1:-1]))
@@ -30,6 +40,9 @@ class DataParser:
                 data_dict[key] = value
             else:
                 data_dict[key] = self.replacements[key]
+        data_dict["DT"] = self.get_datetime_value(data_dict["D"], data_dict["T"])
+        data_dict.pop("D")
+        data_dict.pop("T")
         return data_dict
     
 class DataSender:

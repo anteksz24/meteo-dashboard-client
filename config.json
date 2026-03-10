@@ -2,5 +2,7 @@
     "replacements":
     {
         "S": "06ZM"
-    }
+    },
+
+    "use-computer-datetime": true
 }
