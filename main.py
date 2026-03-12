@@ -24,11 +24,11 @@ class DataParser:
     
     def get_datetime_value(self, date, time):
         if self.use_computer_datetime:
-            date_and_time = str(datetime.datetime.now())
-            return date_and_time[:-7]
+            date_and_time = str(datetime.datetime.now(datetime.timezone.utc))
+            return date_and_time[:-13]
         else:
-            date_and_time = "20" + date[:2] + "-" + date[2:4] + "-" + date[4:6] + " " + time[:2] + ":" + time[2:4] + ":" + time[4:6]
-            return date_and_time
+            date_and_time = datetime.datetime.fromisoformat("20" + date[:2] + "-" + date[2:4] + "-" + date[4:6] + " " + time[:2] + ":" + time[2:4] + ":" + time[4:6])
+            return str(date_and_time.astimezone(datetime.timezone.utc))[:-6]
 
     def parse_data(self, data):
         data_split = (re.split(r':|;', data[1:-1]))
