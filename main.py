@@ -48,11 +48,8 @@ class DataParser:
 class DataSender:
     def send_request(self, data):
         print(f"Sending data to: {endpoint}")
-        try:
-            response = requests.post(endpoint, json = data)
-            print(f"Status: {response.status_code}")
-        except Exception as e:
-            print(f"Error while sending data: {e}")
+        response = requests.post(endpoint, json = data)
+        print(f"Status: {response.status_code}")
 
 class FileModificationHandler(FileSystemEventHandler):
     def __init__(self):
@@ -62,14 +59,17 @@ class FileModificationHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if event.src_path == file_path:
-            with open(file_path, "r") as file:
-                data = {
-                    "content": self.parser.parse_data(file.read()),
-                    "password": os.getenv("METEO_PASSWORD")
-                }
-                if data["content"] != self.last_data:
-                    self.last_data = data["content"]
-                    self.sender.send_request(data)
+            try:
+                with open(file_path, "r") as file:
+                    data = {
+                        "content": self.parser.parse_data(file.read()),
+                        "password": os.getenv("METEO_PASSWORD")
+                    }
+                    if data["content"] != self.last_data:
+                        self.last_data = data["content"]
+                        self.sender.send_request(data)
+            except Exception as e:
+                print(f"Error while parsing or sending data: {e}")
 
 if __name__ == "__main__":
     file_modification_handler = FileModificationHandler()
