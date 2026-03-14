@@ -4,5 +4,7 @@
         "S": "06ZM"
     },
 
-    "use-computer-datetime": true
+    "use-computer-datetime": true,
+
+    "file-encoding": "utf_8"
 }

@@ -56,11 +56,13 @@ class FileModificationHandler(FileSystemEventHandler):
         self.last_data = ""
         self.sender = DataSender()
         self.parser = DataParser()
+        config = ConfigLoader().load_config()
+        self.encoding = config["file-encoding"]
 
     def on_modified(self, event):
         if event.src_path == file_path:
             try:
-                with open(file_path, "r") as file:
+                with open(file_path, "r", encoding = self.encoding) as file:
                     data = {
                         "content": self.parser.parse_data(file.read()),
                         "password": os.getenv("METEO_PASSWORD")
