@@ -48,7 +48,7 @@ class DataParser:
 class DataSender:
     def send_request(self, data):
         print(f"Sending data to: {endpoint}")
-        response = requests.post(endpoint, json = data)
+        response = requests.post(url = endpoint, json = data, timeout = 30)
         print(f"Status: {response.status_code}")
 
 class FileModificationHandler(FileSystemEventHandler):
