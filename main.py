@@ -61,6 +61,7 @@ class FileModificationHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if event.src_path == file_path:
+            time.sleep(1)
             try:
                 with open(file_path, "r", encoding = self.encoding) as file:
                     data = {
